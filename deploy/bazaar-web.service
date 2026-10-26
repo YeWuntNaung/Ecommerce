@@ -1,0 +1,29 @@
+# Copy to /etc/systemd/system/bazaar-web.service
+
+[Unit]
+Description=Bazaar MM Angular SSR server
+After=network.target bazaar-api.service
+
+[Service]
+Type=simple
+User=bazaar
+WorkingDirectory=/srv/bazaar/web
+Environment=PORT=4000
+Environment=HOST=127.0.0.1
+Environment=API_BASE_URL=http://127.0.0.1:5080
+
+# Angular 22 rejects requests whose Host header is not allow-listed (SSRF
+# protection). List the public hostname here, without a scheme or port.
+# Multiple hosts are comma-separated.
+Environment=NG_ALLOWED_HOSTS=bazaar.example.com
+
+# Caddy is the only process that can reach this port, so its forwarding
+# headers can be trusted for building the request URL during SSR.
+Environment=NG_TRUST_PROXY_HEADERS=x-forwarded-host,x-forwarded-proto,x-forwarded-for
+
+ExecStart=/usr/bin/node server/server.mjs
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

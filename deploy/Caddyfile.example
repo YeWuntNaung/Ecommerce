@@ -1,0 +1,19 @@
+# Copy to /etc/caddy/Caddyfile on the Ubuntu VM.
+# One origin serves the SSR app and proxies API traffic to Kestrel, which keeps
+# the auth cookie same-site and avoids any CORS configuration in production.
+
+bazaar.example.com {
+    encode zstd gzip
+
+    handle /api/* {
+        reverse_proxy 127.0.0.1:5080
+    }
+
+    handle /health {
+        reverse_proxy 127.0.0.1:5080
+    }
+
+    handle {
+        reverse_proxy 127.0.0.1:4000
+    }
+}

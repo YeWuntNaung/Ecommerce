@@ -1,0 +1,22 @@
+# Copy to /etc/systemd/system/bazaar-api.service
+# Adjust User/WorkingDirectory and the environment file for the VM.
+
+[Unit]
+Description=Bazaar MM API
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=notify
+User=bazaar
+WorkingDirectory=/srv/bazaar/api
+EnvironmentFile=/srv/bazaar/api/.env
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5080
+ExecStart=/usr/bin/dotnet Ecommerce.Api.dll
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
