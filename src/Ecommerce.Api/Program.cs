@@ -7,6 +7,7 @@ using Ecommerce.Application.Abstractions;
 using Ecommerce.Infrastructure;
 using Ecommerce.Infrastructure.Persistence;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Hosting;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -16,6 +17,11 @@ builder.Host.UseSerilog((_, loggerConfiguration) => loggerConfiguration
     .MinimumLevel.Information()
     .Enrich.FromLogContext()
     .WriteTo.Console());
+
+builder.Services.Configure<HostOptions>(options =>
+{
+    options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
+});
 
 // Composition root: the only place that knows both Application and Infrastructure.
 builder.Services.AddApplication();
